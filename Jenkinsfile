@@ -28,14 +28,16 @@ pipeline {
             }
         }
 
-        stage('Push image') {
+       stage('Push image') {
             steps {
-                sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
-                sh "docker push vaishsuresh24/test:${BUILD_NUMBER}"
-                sh "docker tag vaishsuresh24/test:${BUILD_NUMBER} vaishsuresh24/test:latest"
-                sh "docker push vaishsuresh24/test:latest"
-            }
-         }
+                withCredentials([usernamePassword(credentialsId: 'DOCKER', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                sh 'docker push vaishsuresh24/test:${BUILD_NUMBER}'
+                sh 'docker tag vaishsuresh24/test:${BUILD_NUMBER} vaishsuresh24/test:latest'
+                sh 'docker push vaishsuresh24/test:latest'
+                }
+             }
+        }
 
 
         stage('Trigger ManifestUpdate') {
