@@ -14,7 +14,7 @@ pipeline {
         stage('Build image') {
             steps {
                 script {
-                    app = docker.build("vaishsuresh24/test:${DOCKERTAG}")
+                    app = docker.build("vaishsuresh24/test:${BUILD_NUMBER}")
                 }
             }
         }
@@ -33,7 +33,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-                        app.push("${DOCKERTAG}")
+                        app.push("${BUILD_NUMBER}")
                         app.push("latest")
                     }
                 }
@@ -44,7 +44,7 @@ pipeline {
             steps {
                 script {
                     build job: 'updatemanifest',
-                        parameters: [string(name: 'DOCKERTAG', value: DOCKERTAG)]
+                        parameters: [string(name: 'DOCKERTAG', value: BUILD_NUMBER)]
                 }
             }
         }
