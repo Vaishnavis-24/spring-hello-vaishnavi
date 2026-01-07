@@ -1,53 +1,34 @@
-pipeline {
-  agent any
-
-  environment {
-    IMAGE_NAME = "rakhi12345/test"
-  }
-
-  stages {
+node {
+    def app
 
     stage('Clone repository') {
-      steps {
+
+
         checkout scm
-      }
     }
 
     stage('Build image') {
-      steps {
-        script {
-          app = docker.build("${IMAGE_NAME}")
-        }
-      }
+
+       app = docker.build("rakhi12345/test")
     }
 
     stage('Test image') {
-      steps {
-        script {
-          app.inside {
+
+
+        app.inside {
             sh 'echo "Tests passed"'
-          }
         }
-      }
     }
 
     stage('Push image') {
-      steps {
-        script {
-          docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+
+        docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
             app.push("${env.BUILD_NUMBER}")
-          }
         }
-      }
     }
 
     stage('Trigger ManifestUpdate') {
-      steps {
-        echo "triggering updatemanifest job"
-        build job: 'updatemanifest',
-          parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
-      }
-    }
-  }
+                echo "triggering updatemanifestjob"
+                build job: 'updatemanifest', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
+        }
 }
- 
