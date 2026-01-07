@@ -1,9 +1,7 @@
+def app
+
 pipeline {
     agent any
-
-    environment {
-        IMAGE_NAME = "rakhi12345/test"
-    }
 
     stages {
 
@@ -16,7 +14,7 @@ pipeline {
         stage('Build image') {
             steps {
                 script {
-                    app = docker.build("${IMAGE_NAME}:${BUILD_NUMBER}")
+                    app = docker.build("rakhi12345/test:${BUILD_NUMBER}")
                 }
             }
         }
@@ -53,5 +51,4 @@ pipeline {
         }
     }
 }
-
  
