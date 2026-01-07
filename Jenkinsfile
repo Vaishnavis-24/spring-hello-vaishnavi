@@ -14,7 +14,7 @@ pipeline {
         stage('Build image') {
             steps {
                 script {
-                    app = docker.build("rakhi12345/test:${BUILD_NUMBER}")
+                    app = docker.build("vaishsuresh24/test:${BUILD_NUMBER}")
                 }
             }
         }
