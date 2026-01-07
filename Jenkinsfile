@@ -13,11 +13,10 @@ pipeline {
 
         stage('Build image') {
             steps {
-                script {
-                    app = docker.build("vaishsuresh24/test:${BUILD_NUMBER}")
-                }
+                sh "docker build -t vaishsuresh24/test:${BUILD_NUMBER} ."
             }
         }
+
 
         stage('Test image') {
             steps {
@@ -31,14 +30,13 @@ pipeline {
 
         stage('Push image') {
             steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-                        app.push("${BUILD_NUMBER}")
-                        app.push("latest")
-                    }
-                }
+                sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
+                sh "docker push vaishsuresh24/test:${BUILD_NUMBER}"
+                sh "docker tag vaishsuresh24/test:${BUILD_NUMBER} vaishsuresh24/test:latest"
+                sh "docker push vaishsuresh24/test:latest"
             }
-        }
+         }
+
 
         stage('Trigger ManifestUpdate') {
             steps {
